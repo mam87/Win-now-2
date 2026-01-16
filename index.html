@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>تحدي الضغطة – 100 دولار أسبوعياً + 50 دولار بونص!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body{margin:0;font-family:'Tahoma',sans-serif;background:#111;color:#fff;text-align:center;direction:rtl}
+    h1{margin:20px 0 8px;font-size:24px}
+    #counter{font-size:44px;margin:8px}
+    #clickBtn{font-size:26px;padding:20px 50px;background:#00c853;border:none;color:#fff;border-radius:12px;cursor:pointer;transition:.2s}
+    #clickBtn:disabled{background:#555;cursor:not-allowed}
+    #result{margin:18px;font-size:18px}
+    a.download{display:inline-block;margin:12px;padding:14px 28px;background:#1976d2;color:#fff;border-radius:10px;text-decoration:none;font-size:18px}
+    .hidden{display:none}
+    #timer{font-size:22px;color:#ffeb3b;margin:6px}
+  </style>
+</head>
+<body>
+
+<!-- 1) صفحة الدفع -->
+<div id="payPage">
+  <h1>🎁 اربح 100 دولار أسبوعياً + 50 دولار بونص!</h1>
+  <p>اضغط أكبر عدد مرات خلال 10 ثواني فقط.<br>ادفع 1 دولار لدخول القرعة.</p>
+  <a class="download" href="https://paypal.me/mamo960/1usd" target="_blank">💸 ادفع الآن 1 دولار</a><br>
+  <button onclick="showGame()" style="margin-top:12px;font-size:18px;padding:10px 25px">✅ أنا دفعت – أريد اللعب</button>
+</div>
+
+<!-- 2) اللعبة -->
+<div id="gamePage" class="hidden">
+  <h1>⚡ تحدي الضغطة – اضغط أكبر عدد مرات خلال 10 ثواني!</h1>
+  <div id="timer">10</div>
+  <div id="counter">0</div>
+  <button id="clickBtn" onclick="tap()">ابدأ اللعب</button>
+  <div id="result"></div>
+</div>
+
+<!-- 3) التسجيل بعد اللعب -->
+<div id="regPage" class="hidden">
+  <h2>🎉 أحسنت!</h2>
+  <p id="score"></p>
+  <p>الآن سجل اسمك لدخول القرعة:</p>
+  <input id="nameIn" placeholder="اسمك الكامل" style="padding:10px;font-size:16px;width:220px"><br><br>
+  <button onclick="savePlayer()" style="font-size:18px;padding:10px 25px">🎟️ تسجيل بالقرعة</button>
+</div>
+
+<!-- 4) صفحة النتائج -->
+<div id="winnerPage" class="hidden">
+  <h1>🏆 الفائز الأسبوعي</h1>
+  <p id="wName">...</p>
+  <button onclick="location.reload()" style="font-size:16px;padding:10px 20px">🔄 العب مرة أخرى</button>
+</div>
+
+<script>
+  let count=0,timer=10,interval,btn=document.getElementById('clickBtn'),timerDiv=document.getElementById('timer');
+
+  window.onload=()=>{ if(!localStorage.getItem('paid')){ document.getElementById('payPage').classList.remove('hidden'); } };
+
+  function showGame(){
+    localStorage.setItem('paid','true');
+    document.getElementById('payPage').classList.add('hidden');
+    document.getElementById('gamePage').classList.remove('hidden');
+  }
+
+  function startGame(){
+    count=0; timer=10;
+    document.getElementById('counter').innerText=count;
+    timerDiv.innerText=timer;
+    btn.innerText='اضغط بسرعة!';
+    btn.onclick=tap;
+    interval=setInterval(()=>{
+      timer--;
+      timerDiv.innerText=timer;
+      if(timer<=0) endGame();
+    },1000);
+  }
+
+  function tap(){
+    if(timer===10&&count===0) startGame();
+    count++;
+    document.getElementById('counter').innerText=count;
+  }
+
+  function endGame(){
+    clearInterval(interval);
+    btn.disabled=true;
+    document.getElementById('result').innerHTML='✅ لقد أنهيت التحدي بـ '+count+' ضغطة!';
+    setTimeout(()=>{
+      document.getElementById('gamePage').classList.add('hidden');
+      document.getElementById('regPage').classList.remove('hidden');
+      document.getElementById('score').innerText='نتيجتك: '+count+' ضغطة';
+    },700);
+  }
+
+  function savePlayer(){
+    const n=document.getElementById('nameIn').value.trim();
+    if(!n){alert('أدخل اسمك أولاً');return;}
+    let list=JSON.parse(localStorage.getItem('players')||'[]');
+    list.push({name:n,score:count});
+    localStorage.setItem('players',JSON.stringify(list));
+    alert('🎟️ تم التسجيل بنجاح! ستُعلن النتيجة قريباً.');
+    location.reload();
+  }
+
+  // عرض الفائز بعد أسبوعين (غيّر التاريخ حسب انطلاقتك)
+  const endDate=new Date('2026-03-02');
+  if(new Date()>=endDate){
+    [payPage,gamePage,regPage].forEach(p=>p.classList.add('hidden'));
+    winnerPage.classList.remove('hidden');
+    const players=JSON.parse(localStorage.getItem('players')||'[]');
+    if(players.length){
+      const w=players[Math.floor(Math.random()*players.length)];
+      document.getElementById('wName').innerText='الفائز: '+w.name+' (بنتيجة '+w.score+' ضغطة)';
+    }else{
+      document.getElementById('wName').innerText='لا يوجد مشاركون بعد.';
+    }
+  }
+</script>
+</body>
+</html>
