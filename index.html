@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MamonTV - بث مباشر عالمي</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#05080e;--bg2:#0b1120;--bg3:#111827;--card:#151d2e;--cardH:#1c2740;--acc:#00d4ff;--accG:rgba(0,212,255,.25);--acc2:#7c3aed;--live:#ef4444;--t1:#eef2ff;--t2:#94a3b8;--t3:#475569;--brd:rgba(148,163,184,.08);--grad:linear-gradient(135deg,#00d4ff,#7c3aed);--glass:rgba(11,17,32,.85)}
+body{font-family:'IBM Plex Sans Arabic','Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--t3);border-radius:9px}
+body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.03),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,.03),transparent 50%);pointer-events:none;z-index:0}
+
+/* Splash */
+#splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s,visibility .6s}
+#splash.out{opacity:0;visibility:hidden;pointer-events:none}
+.sp-logo{font-family:'Noto Kufi Arabic';font-size:2.6rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sp-sub{color:var(--t3);font-size:.78rem;margin:.3rem 0 2rem}
+.sp-bar{width:240px;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.sp-fill{height:100%;width:0%;background:var(--grad);border-radius:2px;transition:width .4s}
+.sp-txt{margin-top:1rem;color:var(--t2);font-size:.78rem;text-align:center;max-width:300px}
+.sp-num{color:var(--acc);font-family:'Noto Kufi Arabic';font-weight:700;font-size:1.1rem;margin-top:.5rem}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;height:54px;background:var(--glass);backdrop-filter:blur(24px);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 1.2rem;z-index:100;gap:.7rem}
+.nav .brand{font-family:'Noto Kufi Arabic';font-size:1.1rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;flex-shrink:0}
+.nav .ldot{width:7px;height:7px;border-radius:50%;background:var(--live);margin-right:.3rem;animation:bl 1.5s infinite;flex-shrink:0}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.tabs{display:flex;gap:0;flex-shrink:0}
+.tabs a{color:var(--t3);font-size:.72rem;font-weight:500;padding:.35rem .6rem;cursor:pointer;border-radius:6px;transition:all .25s;text-decoration:none;white-space:nowrap}
+.tabs a:hover{color:var(--t2)}
+.tabs a.on{color:var(--acc);background:rgba(0,212,255,.08)}
+.srch{margin-right:auto;position:relative}
+.srch input{background:rgba(255,255,255,.04);border:1px solid var(--brd);color:var(--t1);padding:.35rem .6rem .35rem 1.8rem;border-radius:20px;width:180px;font-family:inherit;font-size:.72rem;outline:none;transition:all .3s}
+.srch input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG);width:260px}
+.srch input::placeholder{color:var(--t3)}
+.srch svg{position:absolute;left:.5rem;top:50%;transform:translateY(-50%);color:var(--t3);width:13px;height:13px}
+.bdg{background:var(--grad);color:#fff;padding:.12rem .5rem;border-radius:12px;font-size:.6rem;font-weight:700;flex-shrink:0}
+
+/* App */
+#wrap{display:none;position:relative;z-index:1}
+#wrap.on{display:block}
+.main{margin-top:54px;min-height:calc(100vh - 54px)}
+
+/* Hero */
+.hero{position:relative;padding:2rem 1.5rem 1.5rem;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,.05),transparent 40%,rgba(124,58,237,.05))}
+.hero h1{font-family:'Noto Kufi Arabic';font-size:1.6rem;font-weight:900;line-height:1.3;position:relative;z-index:1}
+.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--t2);font-size:.8rem;margin-top:.3rem;position:relative;z-index:1}
+.hstats{display:flex;gap:1.5rem;margin-top:.8rem;position:relative;z-index:1}
+.hs .n{font-family:'Noto Kufi Arabic';font-size:1.4rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hs .l{font-size:.62rem;color:var(--t3)}
+
+/* Sections */
+.shdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem .5rem}
+.st{font-family:'Noto Kufi Arabic';font-size:.95rem;font-weight:700}
+.ss{color:var(--t3);font-size:.7rem}
+.sa{color:var(--acc);cursor:pointer;font-size:.75rem;text-decoration:none}
+
+/* Filter */
+.fbar{display:flex;gap:.3rem;padding:0 1.5rem .5rem;overflow-x:auto;scrollbar-width:none}
+.fbar::-webkit-scrollbar{display:none}
+.fb{background:rgba(255,255,255,.03);border:1px solid var(--brd);color:var(--t3);padding:.25rem .7rem;border-radius:20px;font-family:inherit;font-size:.68rem;cursor:pointer;white-space:nowrap;transition:all .25s}
+.fb:hover{color:var(--t2)}
+.fb.on{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.25);color:var(--acc)}
+
+/* Grid */
+.g{display:grid;padding:0 1.5rem 1.5rem;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+
+/* Card */
+.c{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:.8rem;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden}
+.c::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s}
+.c:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.15);box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.c:hover::before{opacity:1}
+.c-logo{width:50px;height:50px;border-radius:12px;background:var(--bg2);display:flex;align-items:center;justify-content:center;margin-bottom:.4rem;overflow:hidden;border:1px solid var(--brd)}
+.c-logo img{width:100%;height:100%;object-fit:contain;padding:3px}
+.c-logo .ph{font-family:'Noto Kufi Arabic';font-size:.9rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.c-n{font-size:.7rem;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:1.75em}
+.c-g{font-size:.58rem;color:var(--t3);margin-top:.15rem}
+.fv{position:absolute;top:.35rem;left:.35rem;background:rgba(0,0,0,.4);border:none;color:var(--t3);width:24px;height:24px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;font-size:.7rem;transition:all .2s}
+.fv:hover,.fv.on{color:#f43f5e;background:rgba(244,63,94,.15)}
+
+/* Modal */
+.mo{position:fixed;inset:0;background:rgba(5,8,14,.92);backdrop-filter:blur(12px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.mo.on{display:flex}
+.mb{background:var(--bg2);border:1px solid var(--brd);border-radius:16px;width:100%;max-width:840px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:mu .35s cubic-bezier(.16,1,.3,1)}
+@keyframes mu{from{transform:translateY(20px) scale(.97);opacity:0}}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;background:var(--bg3);border-bottom:1px solid var(--brd)}
+.mh .mt{font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.4rem}
+.mh .lt{background:var(--live);color:#fff;padding:.08rem .35rem;border-radius:4px;font-size:.5rem;font-weight:700;display:flex;align-items:center;gap:.2rem}
+.mh .lt::before{content:'';width:4px;height:4px;border-radius:50%;background:#fff;animation:bl 1s infinite}
+.mx{background:none;border:none;color:var(--t3);cursor:pointer;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s}
+.mx:hover{background:rgba(239,68,68,.15);color:var(--live)}
+.mv{width:100%;aspect-ratio:16/9;background:#000}
+.mv video{width:100%;height:100%;outline:none}
+.mi{padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;border-top:1px solid var(--brd)}
+.ml{width:32px;height:32px;border-radius:8px;background:var(--card);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--brd)}
+.ml img{width:100%;height:100%;object-fit:contain;padding:2px}
+.md .mn{font-weight:600;font-size:.8rem}
+.md .mg{color:var(--t3);font-size:.68rem}
+
+/* Pages */
+.pg{display:none}.pg.on{display:block}
+.empty{display:flex;flex-direction:column;align-items:center;padding:3rem;color:var(--t3);text-align:center;grid-column:1/-1}
+.empty .ei{font-size:2rem;margin-bottom:.5rem}
+.lm{grid-column:1/-1;background:rgba(255,255,255,.03);border:1px solid var(--brd);color:var(--t2);padding:.6rem;border-radius:10px;font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .25s}
+.lm:hover{background:rgba(0,212,255,.06);color:var(--acc);border-color:rgba(0,212,255,.2)}
+
+/* Mobile */
+@media(max-width:768px){
+  .nav{padding:0 .5rem;gap:.3rem;height:48px}.tabs{display:none}
+  .srch input{width:100px}.srch input:focus{width:150px}
+  .bn{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);border-top:1px solid var(--brd);display:flex;justify-content:space-around;padding:.25rem 0 env(safe-area-inset-bottom,.25rem);z-index:100}
+  .bn a{display:flex;flex-direction:column;align-items:center;gap:.05rem;color:var(--t3);text-decoration:none;font-size:.52rem;padding:.15rem .4rem;transition:color .2s}
+  .bn a.on{color:var(--acc)}.bn a svg{width:17px;height:17px}
+  .main{margin-top:48px;margin-bottom:55px}
+  .hero{padding:1.2rem .8rem 1rem}.hero h1{font-size:1.2rem}
+  .shdr,.fbar,.g{padding-left:.6rem;padding-right:.6rem}
+  .g{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:.4rem}
+  .c{padding:.6rem;border-radius:9px}.c-logo{width:40px;height:40px;border-radius:9px}.c-n{font-size:.65rem}
+}
+@media(min-width:769px){.bn{display:none}}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="sp-logo">MamonTV</div>
+  <div class="sp-sub">بث مباشر • قنوات عالمية</div>
+  <div class="sp-bar"><div class="sp-fill" id="sf"></div></div>
+  <div class="sp-txt" id="stxt">جاري تحميل قاعدة البيانات...</div>
+  <div class="sp-num" id="snum"></div>
+</div>
+
+<div id="wrap">
+  <nav class="nav">
+    <div class="ldot"></div>
+    <div class="brand" onclick="go('home')">MamonTV</div>
+    <div class="tabs">
+      <a onclick="go('home')" class="on" data-p="home">الرئيسية</a>
+      <a onclick="go('all')" data-p="all">جميع القنوات</a>
+      <a onclick="go('fav')" data-p="fav">❤️ المفضلة</a>
+    </div>
+    <div class="srch">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="si" placeholder="ابحث..." oninput="doSearch(this.value)">
+    </div>
+    <div class="bdg" id="cnt">0</div>
+  </nav>
+  <div class="bn">
+    <a onclick="go('home')" class="on" data-p="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>الرئيسية</a>
+    <a onclick="go('all')" data-p="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>القنوات</a>
+    <a onclick="go('fav')" data-p="fav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>المفضلة</a>
+  </div>
+  <main class="main">
+    <div class="pg on" id="v-home">
+      <div class="hero">
+        <h1><span>MamonTV</span> بث مباشر عالمي</h1>
+        <p>آلاف القنوات من جميع أنحاء العالم - مجانية ومفتوحة</p>
+        <div class="hstats"><div class="hs"><div class="n" id="xT">0</div><div class="l">قناة</div></div><div class="hs"><div class="n" id="xG">0</div><div class="l">تصنيف</div></div></div>
+      </div>
+      <div id="hc"></div>
+    </div>
+    <div class="pg" id="v-all">
+      <div class="shdr"><div><div class="st">📡 جميع القنوات</div><div class="ss" id="as"></div></div></div>
+      <div class="fbar" id="af"></div>
+      <div class="g" id="ag"></div>
+    </div>
+    <div class="pg" id="v-fav">
+      <div class="shdr"><div><div class="st">❤️ المفضلة</div><div class="ss" id="fs"></div></div></div>
+      <div class="g" id="fg"></div>
+    </div>
+  </main>
+</div>
+
+<div class="mo" id="modal">
+  <div class="mb">
+    <div class="mh"><div class="mt"><span class="lt">LIVE</span><span id="mt"></span></div><button class="mx" onclick="cp()">✕</button></div>
+    <div class="mv"><video id="vid" controls autoplay playsinline></video></div>
+    <div id="perr"></div>
+    <div class="mi"><div class="ml" id="mll"></div><div class="md"><div class="mn" id="mnn"></div><div class="mg" id="mgg"></div></div></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
+<script>
+const M3U_URL='https://iptv-org.github.io/iptv/index.m3u';
+let CH=[],fv=JSON.parse(localStorage.getItem('mtv4')||'[]'),hl=null,curF='all',allGroups=[];
+
+// Parse M3U
+function parse(t){
+  const ls=t.split('\n'),r=[];let c=null;
+  for(let i=0;i<ls.length;i++){
+    const l=ls[i].trim();
+    if(l.startsWith('#EXTINF:')){
+      c={};
+      const tn=l.match(/tvg-name="([^"]*)"/),tl=l.match(/tvg-logo="([^"]*)"/),gt=l.match(/group-title="([^"]*)"/);
+      const ci=l.lastIndexOf(','),dn=ci!==-1?l.substring(ci+1).trim():'';
+      c.name=tn?tn[1]:dn;c.dn=dn||(tn?tn[1]:'Unknown');c.logo=tl?tl[1]:'';c.group=gt?gt[1]:'';
+      if(!c.group)c.group='Other';
+    }else if(l&&!l.startsWith('#')&&c){c.url=l;c.id='c'+r.length;r.push(c);c=null;}
+  }return r;
+}
+
+function grps(items){const g={};items.forEach(i=>{g[i.group]=(g[i.group]||0)+1;});return Object.entries(g).sort((a,b)=>b[1]-a[1]);}
+
+function card(i,x){
+  const d=Math.min(x*5,120);
+  return `<div class="c" style="animation:fadeUp .3s ${d}ms both" onclick="pl('${i.id}')">
+    <button class="fv ${fv.includes(i.id)?'on':''}" onclick="event.stopPropagation();tf('${i.id}',this)">${fv.includes(i.id)?'❤️':'🤍'}</button>
+    <div class="c-logo">${i.logo?`<img src="${i.logo}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=ph>${(i.dn[0]||'?')}</div>'">`:`<div class="ph">${i.dn[0]||'?'}</div>`}</div>
+    <div class="c-n">${i.dn}</div>
+    <div class="c-g">${i.group}</div>
+  </div>`;
+}
+function rGrid(items,el,lim){
+  const e=document.getElementById(el);
+  if(!items.length){e.innerHTML='<div class="empty"><div class="ei">📡</div><div>لا توجد نتائج</div></div>';return;}
+  const mx=lim||150,sh=items.slice(0,mx);
+  e.innerHTML=sh.map((i,x)=>card(i,x)).join('');
+  if(items.length>mx)e.innerHTML+=`<button class="lm" onclick="more('${el}',${mx})">عرض المزيد (${(items.length-mx).toLocaleString()} قناة)</button>`;
+}
+function more(el,cur){
+  const items=curF==='all'?CH:CH.filter(i=>i.group===curF);
+  rGrid(items,el,cur+300);
+}
+function rCats(){
+  const el=document.getElementById('af');
+  el.innerHTML=`<button class="fb on" onclick="filt('all',this)">الكل <span style="opacity:.5;font-size:.6rem">${CH.length.toLocaleString()}</span></button>`+
+    allGroups.slice(0,50).map(([n,c])=>`<button class="fb" onclick="filt('${n.replace(/'/g,"\\'")}',this)">${n} <span style="opacity:.5;font-size:.6rem">${c}</span></button>`).join('');
+}
+function filt(cat,btn){
+  curF=cat;btn.parentElement.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  rGrid(cat==='all'?CH:CH.filter(i=>i.group===cat),'ag');
+}
+function rHome(){
+  const gs=allGroups.slice(0,8);
+  let h='';
+  gs.forEach(([name,count])=>{
+    const items=CH.filter(i=>i.group===name).slice(0,6);
+    h+=`<div class="shdr"><div><div class="st">${name}</div><div class="ss">${count.toLocaleString()} قناة</div></div><a class="sa" onclick="go('all')">الكل ←</a></div>
+    <div class="g">${items.map((i,x)=>card(i,x)).join('')}</div>`;
+  });
+  document.getElementById('hc').innerHTML=h;
+}
+
+// Nav
+function go(p){
+  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
+  document.getElementById('v-'+p).classList.add('on');
+  document.querySelectorAll('[data-p]').forEach(a=>a.classList.toggle('on',a.dataset.p===p));
+  if(p==='fav')rFav();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function doSearch(q){
+  q=q.toLowerCase().trim();
+  if(!q){rGrid(CH,'ag');return;}
+  const p=document.querySelector('.pg.on').id.replace('v-','');
+  if(p==='home')go('all');
+  rGrid(CH.filter(i=>i.dn.toLowerCase().includes(q)||i.group.toLowerCase().includes(q)),'ag');
+}
+function tf(id,btn){
+  const idx=fv.indexOf(id);
+  if(idx===-1){fv.push(id);btn.classList.add('on');btn.innerHTML='❤️';}
+  else{fv.splice(idx,1);btn.classList.remove('on');btn.innerHTML='🤍';}
+  localStorage.setItem('mtv4',JSON.stringify(fv));
+}
+function rFav(){
+  const fa=CH.filter(i=>fv.includes(i.id));
+  document.getElementById('fs').textContent=fa.length+' قناة';
+  if(!fa.length){document.getElementById('fg').innerHTML='<div class="empty"><div class="ei">❤️</div><div>لم تضف قنوات للمفضلة</div></div>';return;}
+  rGrid(fa,'fg');
+}
+
+// Player
+function pl(id){
+  const item=CH.find(i=>i.id===id);if(!item)return;
+  document.getElementById('mt').textContent=item.dn;
+  document.getElementById('mnn').textContent=item.dn;
+  document.getElementById('mgg').textContent=item.group;
+  document.getElementById('mll').innerHTML=item.logo?`<img src="${item.logo}" onerror="this.parentElement.textContent='📺'">`:'📺';
+  const v=document.getElementById('vid');
+  const err=document.getElementById('perr');err.textContent='';err.style.display='none';
+  if(hl){hl.destroy();hl=null;}
+  const url=item.url.trim();
+  const isHLS=url.includes('.m3u8');
+  const isDirect=url.match(/\.(mp4|mp3|webm|ogg)(\?|$)/i);
+  
+  if(isDirect){
+    v.src=url;v.play().catch(()=>{});
+  } else if(typeof Hls!=='undefined'&&Hls.isSupported()){
+    hl=new Hls({enableWorker:true,xhrSetup:x=>{x.timeout=12000;}});
+    hl.loadSource(url);hl.attachMedia(v);
+    hl.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));
+    hl.on(Hls.Events.ERROR,(e,d)=>{
+      if(d.fatal){
+        hl.destroy();hl=null;
+        v.src=url;v.play().catch(()=>{
+          err.textContent='⚠️ تعذر تشغيل القناة - الرابط قد يكون معطل أو محجوب';
+          err.style.display='block';err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';
+        });
+      }
+    });
+  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+    v.src=url;v.play().catch(()=>{});
+  } else {
+    v.src=url;v.play().catch(()=>{});
+  }
+  v.onerror=()=>{err.textContent='⚠️ خطأ في البث';err.style.display='block';err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';};
+  document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden';
+}
+function cp(){
+  const v=document.getElementById('vid');v.pause();v.removeAttribute('src');v.load();v.onerror=null;
+  if(hl){hl.destroy();hl=null;}
+  document.getElementById('perr').style.display='none';
+  document.getElementById('modal').classList.remove('on');document.body.style.overflow='';
+}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)cp();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cp();});
+
+// CSS animation
+const style=document.createElement('style');
+style.textContent='@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}';
+document.head.appendChild(style);
+
+// LOAD
+(async function(){
+  const sf=document.getElementById('sf'),stxt=document.getElementById('stxt'),snum=document.getElementById('snum');
+  sf.style.width='5%';
+  try{
+    stxt.textContent='جاري الاتصال بقاعدة البيانات...';
+    const resp=await fetch(M3U_URL);
+    if(!resp.ok)throw new Error('HTTP '+resp.status);
+    
+    sf.style.width='15%';stxt.textContent='جاري التحميل...';
+    const reader=resp.body.getReader();
+    const total=parseInt(resp.headers.get('content-length'))||0;
+    let received=0,chunks=[];
+    
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      chunks.push(value);received+=value.length;
+      const pct=total?Math.round((received/total)*60)+15:30;
+      sf.style.width=pct+'%';
+      const mb=(received/1024/1024).toFixed(1);
+      stxt.textContent=`جاري التحميل... ${mb} MB`;
+    }
+    
+    sf.style.width='75%';stxt.textContent='جاري تحليل القنوات...';
+    const blob=new Blob(chunks);
+    const text=await blob.text();
+    
+    sf.style.width='85%';
+    CH=parse(text);
+    snum.textContent=CH.length.toLocaleString()+' قناة';
+    stxt.textContent='جاري بناء الواجهة...';
+    allGroups=grps(CH);
+    
+    sf.style.width='95%';
+    document.getElementById('cnt').textContent=CH.length.toLocaleString();
+    document.getElementById('xT').textContent=CH.length.toLocaleString();
+    document.getElementById('xG').textContent=allGroups.length;
+    document.getElementById('as').textContent=CH.length.toLocaleString()+' قناة';
+    
+    rHome();rCats();rGrid(CH,'ag');
+    
+    sf.style.width='100%';stxt.textContent='جاهز!';
+    setTimeout(()=>{document.getElementById('splash').classList.add('out');document.getElementById('wrap').classList.add('on');},400);
+  }catch(e){
+    sf.style.width='100%';sf.style.background='#ef4444';
+    stxt.textContent='خطأ: '+e.message;
+    snum.textContent='حاول فتح الملف في متصفح خارجي';
+  }
+})();
+</script>
+</body>
+</html>
