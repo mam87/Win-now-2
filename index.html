@@ -93,8 +93,12 @@ body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%
 .mh .lt::before{content:'';width:4px;height:4px;border-radius:50%;background:#fff;animation:bl 1s infinite}
 .mx{background:none;border:none;color:var(--t3);cursor:pointer;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s}
 .mx:hover{background:rgba(239,68,68,.15);color:var(--live)}
-.mv{width:100%;aspect-ratio:16/9;background:#000}
+.mv{width:100%;aspect-ratio:16/9;background:#000;position:relative}
 .mv video{width:100%;height:100%;outline:none}
+.mv-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);color:var(--t2);font-size:.75rem;gap:.5rem;pointer-events:none;opacity:0;transition:opacity .3s}
+.mv-load.show{opacity:1}
+.mv-spin{width:18px;height:18px;border:2px solid var(--t3);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 .mi{padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;border-top:1px solid var(--brd)}
 .ml{width:32px;height:32px;border-radius:8px;background:var(--card);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--brd)}
 .ml img{width:100%;height:100%;object-fit:contain;padding:2px}
@@ -178,7 +182,7 @@ body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%
 <div class="mo" id="modal">
   <div class="mb">
     <div class="mh"><div class="mt"><span class="lt">LIVE</span><span id="mt"></span></div><button class="mx" onclick="cp()">✕</button></div>
-    <div class="mv"><video id="vid" controls autoplay playsinline></video></div>
+    <div class="mv"><video id="vid" controls autoplay playsinline></video><div class="mv-load" id="mvload"><div class="mv-spin"></div>جاري التحميل...</div></div>
     <div id="perr"></div>
     <div class="mi"><div class="ml" id="mll"></div><div class="md"><div class="mn" id="mnn"></div><div class="mg" id="mgg"></div></div></div>
   </div>
@@ -275,45 +279,91 @@ function rFav(){
 }
 
 // Player
+const PROXY='https://corsproxy.io/?url=';
+let curId=null,tryCount=0;
+
+function showErr(msg,canRetry){
+  const err=document.getElementById('perr');
+  err.innerHTML=msg+(canRetry?` <button onclick="retryProxy()" style="margin-right:.5rem;background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.3);color:var(--acc);padding:.15rem .5rem;border-radius:6px;cursor:pointer;font-family:inherit;font-size:.7rem">إعادة المحاولة عبر بروكسي</button>`:'');
+  err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';
+}
+
+function loadStream(url,useProxy){
+  const v=document.getElementById('vid');
+  const src=useProxy?PROXY+encodeURIComponent(url):url;
+  const err=document.getElementById('perr');
+  err.style.display='none';err.innerHTML='';
+  if(hl){hl.destroy();hl=null;}
+  v.removeAttribute('src');v.load();
+  v.onerror=null;
+
+  const loader=document.getElementById('mvload');
+  loader.classList.add('show');
+  v.oncanplay=()=>loader.classList.remove('show');
+  v.onplaying=()=>loader.classList.remove('show');
+
+  const isDirect=url.match(/\.(mp4|mp3|webm|ogg)(\?|$)/i);
+  const doFallback=()=>{
+    loader.classList.remove('show');
+    if(!useProxy&&tryCount<1){
+      tryCount++;
+      loadStream(url,true);
+    } else {
+      showErr('⚠️ تعذر تشغيل القناة - الرابط قد يكون معطل أو محجوب بسبب CORS',false);
+    }
+  };
+
+  if(isDirect){
+    v.src=src;
+    v.onerror=doFallback;
+    v.play().catch(doFallback);
+  } else if(typeof Hls!=='undefined'&&Hls.isSupported()){
+    hl=new Hls({
+      enableWorker:true,
+      xhrSetup:x=>{x.timeout=15000;},
+      manifestLoadingTimeOut:15000,
+      manifestLoadingMaxRetry:1
+    });
+    hl.loadSource(src);
+    hl.attachMedia(v);
+    hl.on(Hls.Events.MANIFEST_PARSED,()=>{loader.classList.remove('show');v.play().catch(()=>{});});
+    hl.on(Hls.Events.ERROR,(e,d)=>{
+      if(d.fatal){
+        hl.destroy();hl=null;
+        doFallback();
+      }
+    });
+  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
+    v.src=src;
+    v.onerror=doFallback;
+    v.play().catch(()=>{});
+  } else {
+    v.src=src;
+    v.onerror=doFallback;
+    v.play().catch(doFallback);
+  }
+}
+
+function retryProxy(){
+  const item=CH.find(i=>i.id===curId);
+  if(item){tryCount=1;loadStream(item.url.trim(),true);}
+}
+
 function pl(id){
   const item=CH.find(i=>i.id===id);if(!item)return;
+  curId=id;tryCount=0;
   document.getElementById('mt').textContent=item.dn;
   document.getElementById('mnn').textContent=item.dn;
   document.getElementById('mgg').textContent=item.group;
   document.getElementById('mll').innerHTML=item.logo?`<img src="${item.logo}" onerror="this.parentElement.textContent='📺'">`:'📺';
-  const v=document.getElementById('vid');
-  const err=document.getElementById('perr');err.textContent='';err.style.display='none';
-  if(hl){hl.destroy();hl=null;}
-  const url=item.url.trim();
-  const isHLS=url.includes('.m3u8');
-  const isDirect=url.match(/\.(mp4|mp3|webm|ogg)(\?|$)/i);
-  
-  if(isDirect){
-    v.src=url;v.play().catch(()=>{});
-  } else if(typeof Hls!=='undefined'&&Hls.isSupported()){
-    hl=new Hls({enableWorker:true,xhrSetup:x=>{x.timeout=12000;}});
-    hl.loadSource(url);hl.attachMedia(v);
-    hl.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}));
-    hl.on(Hls.Events.ERROR,(e,d)=>{
-      if(d.fatal){
-        hl.destroy();hl=null;
-        v.src=url;v.play().catch(()=>{
-          err.textContent='⚠️ تعذر تشغيل القناة - الرابط قد يكون معطل أو محجوب';
-          err.style.display='block';err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';
-        });
-      }
-    });
-  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
-    v.src=url;v.play().catch(()=>{});
-  } else {
-    v.src=url;v.play().catch(()=>{});
-  }
-  v.onerror=()=>{err.textContent='⚠️ خطأ في البث';err.style.display='block';err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';};
+  loadStream(item.url.trim(),false);
   document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden';
 }
 function cp(){
   const v=document.getElementById('vid');v.pause();v.removeAttribute('src');v.load();v.onerror=null;
   if(hl){hl.destroy();hl=null;}
+  curId=null;tryCount=0;
+  document.getElementById('mvload').classList.remove('show');
   document.getElementById('perr').style.display='none';
   document.getElementById('modal').classList.remove('on');document.body.style.overflow='';
 }
