@@ -1,222 +1,364 @@
-import { useState, useEffect, useRef } from "react";
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طباعة Labels</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap');
 
-const DEFAULT_SETTINGS = { lw: 24, lh: 19, cols: 3, rows: 8, ml: 0, mt: 0 };
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --accent: #00d4aa;
+    --accent2: #7c6af7;
+    --text: #e8e8f0;
+    --text-muted: #6b6b82;
+    --danger: #ff4f6a;
+  }
 
-function loadLS(key, def) {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  h1 { font-size: 1.3rem; font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+  .subtitle { color: var(--text-muted); font-size: 0.8rem; margin-bottom: 20px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .field { margin-bottom: 12px; }
+  label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 5px; }
+
+  input[type=text], input[type=number], textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 9px;
+    border: none;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover, .btn-primary:active { background: #00ffe0; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-danger:active { background: var(--danger); color: #fff; }
+
+  .entries-list { max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
+  .entry-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 7px;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+  }
+  .entry-item span { color: var(--text-muted); }
+  .entry-item strong { color: var(--text); }
+  .del-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0 4px; }
+  .del-btn:active { color: var(--danger); }
+
+  .count-badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+  }
+
+  .settings-saved {
+    font-size: 0.75rem; color: var(--accent);
+    text-align: center; height: 18px; margin-top: 4px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+
+  textarea { resize: vertical; min-height: 70px; }
+
+  .info-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .info-box strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>🏷️ طباعة Labels</h1>
+<p class="subtitle">أدخل الأرقام والأسماء واحفظ PDF مباشرة</p>
+
+<!-- Page Settings -->
+<div class="panel">
+  <div class="section-title">⚙️ إعدادات الصفحة</div>
+  <div class="row2">
+    <div class="field">
+      <label>عرض Label (mm)</label>
+      <input type="number" id="lw" value="24" min="5" max="200" onchange="saveSettings()">
+    </div>
+    <div class="field">
+      <label>ارتفاع Label (mm)</label>
+      <input type="number" id="lh" value="19" min="5" max="200" onchange="saveSettings()">
+    </div>
+    <div class="field">
+      <label>عدد الأعمدة</label>
+      <input type="number" id="cols" value="3" min="1" max="20" onchange="saveSettings()">
+    </div>
+    <div class="field">
+      <label>عدد الصفوف</label>
+      <input type="number" id="rows" value="8" min="1" max="30" onchange="saveSettings()">
+    </div>
+    <div class="field">
+      <label>هامش أيسر (mm)</label>
+      <input type="number" id="ml" value="0" min="0" max="50" onchange="saveSettings()">
+    </div>
+    <div class="field">
+      <label>هامش علوي (mm)</label>
+      <input type="number" id="mt" value="0" min="0" max="50" onchange="saveSettings()">
+    </div>
+  </div>
+  <button class="btn btn-secondary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+  <button class="btn btn-secondary" onclick="resetSettings()">↺ إعادة ضبط</button>
+  <div class="settings-saved" id="saved-msg">✓ تم الحفظ</div>
+</div>
+
+<!-- Add Entry -->
+<div class="panel">
+  <div class="section-title">➕ إضافة Label</div>
+  <div class="row2">
+    <div class="field">
+      <label>SP No</label>
+      <input type="text" id="sp-input" placeholder="مثال: 1001">
+    </div>
+    <div class="field">
+      <label>الاسم</label>
+      <input type="text" id="name-input" placeholder="الاسم">
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="addEntry()">+ إضافة</button>
+
+  <div class="section-title" style="margin-top:14px">📋 استيراد دفعة</div>
+  <div class="info-box">كل سطر: <strong>SP,الاسم</strong><br>مثال: 1001,أحمد محمد</div>
+  <textarea id="bulk-input" placeholder="1001,أحمد محمد&#10;1002,سارة علي&#10;1003,محمد خالد"></textarea>
+  <button class="btn btn-secondary" onclick="bulkAdd()" style="margin-top:8px">📥 استيراد الكل</button>
+</div>
+
+<!-- List -->
+<div class="panel">
+  <div class="section-title">📝 القائمة</div>
+  <div class="count-badge" id="count-badge">0 label</div>
+  <div class="entries-list" id="entries-list"></div>
+  <button class="btn btn-primary" onclick="generatePDF()">📄 توليد PDF وتحميله</button>
+  <button class="btn btn-danger" onclick="clearAll()">🗑️ مسح الكل</button>
+</div>
+
+<script>
+const { jsPDF } = window.jspdf;
+let entries = [];
+
+function loadSettings() {
+  const s = localStorage.getItem('label_settings');
+  if (s) {
+    const d = JSON.parse(s);
+    document.getElementById('lw').value = d.lw ?? 24;
+    document.getElementById('lh').value = d.lh ?? 19;
+    document.getElementById('cols').value = d.cols ?? 3;
+    document.getElementById('rows').value = d.rows ?? 8;
+    document.getElementById('ml').value = d.ml ?? 0;
+    document.getElementById('mt').value = d.mt ?? 0;
+  }
+  const e = localStorage.getItem('label_entries');
+  if (e) { entries = JSON.parse(e); renderList(); }
 }
 
-export default function App() {
-  const [settings, setSettings] = useState(() => loadLS("ls_settings", DEFAULT_SETTINGS));
-  const [entries, setEntries] = useState(() => loadLS("ls_entries", []));
-  const [sp, setSp] = useState("");
-  const [name, setName] = useState("");
-  const [bulk, setBulk] = useState("");
-  const [savedMsg, setSavedMsg] = useState(false);
-  const [tab, setTab] = useState("add"); // add | settings | list
-  const [status, setStatus] = useState("");
-  const nameRef = useRef();
+function saveSettings() {
+  const s = {
+    lw: +document.getElementById('lw').value,
+    lh: +document.getElementById('lh').value,
+    cols: +document.getElementById('cols').value,
+    rows: +document.getElementById('rows').value,
+    ml: +document.getElementById('ml').value,
+    mt: +document.getElementById('mt').value,
+  };
+  localStorage.setItem('label_settings', JSON.stringify(s));
+  const msg = document.getElementById('saved-msg');
+  msg.style.opacity = 1;
+  setTimeout(() => msg.style.opacity = 0, 1500);
+}
 
-  useEffect(() => {
-    localStorage.setItem("ls_settings", JSON.stringify(settings));
-  }, [settings]);
+function resetSettings() {
+  localStorage.removeItem('label_settings');
+  ['lw','lh','cols','rows','ml','mt'].forEach((id,i) => {
+    document.getElementById(id).value = [24,19,3,8,0,0][i];
+  });
+}
 
-  useEffect(() => {
-    localStorage.setItem("ls_entries", JSON.stringify(entries));
-  }, [entries]);
+function getSettings() {
+  return {
+    lw: +document.getElementById('lw').value,
+    lh: +document.getElementById('lh').value,
+    cols: +document.getElementById('cols').value,
+    rows: +document.getElementById('rows').value,
+    ml: +document.getElementById('ml').value,
+    mt: +document.getElementById('mt').value,
+  };
+}
 
-  function addEntry() {
-    if (!sp && !name) return;
-    setEntries(e => [...e, { sp, name }]);
-    setSp(""); setName("");
+function addEntry() {
+  const sp = document.getElementById('sp-input').value.trim();
+  const name = document.getElementById('name-input').value.trim();
+  if (!sp && !name) return;
+  entries.push({ sp, name });
+  document.getElementById('sp-input').value = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('sp-input').focus();
+  saveEntries(); renderList();
+}
+
+function bulkAdd() {
+  const raw = document.getElementById('bulk-input').value.trim();
+  if (!raw) return;
+  raw.split('\n').forEach(line => {
+    const parts = line.split(',');
+    const sp = (parts[0] || '').trim();
+    const name = (parts[1] || '').trim();
+    if (sp || name) entries.push({ sp, name });
+  });
+  document.getElementById('bulk-input').value = '';
+  saveEntries(); renderList();
+}
+
+function deleteEntry(i) {
+  entries.splice(i, 1);
+  saveEntries(); renderList();
+}
+
+function clearAll() {
+  if (!confirm('مسح جميع الـ labels؟')) return;
+  entries = []; saveEntries(); renderList();
+}
+
+function saveEntries() {
+  localStorage.setItem('label_entries', JSON.stringify(entries));
+}
+
+function renderList() {
+  const list = document.getElementById('entries-list');
+  const badge = document.getElementById('count-badge');
+  badge.textContent = entries.length + ' label';
+  if (entries.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:16px">لا يوجد labels بعد</div>';
+    return;
   }
+  list.innerHTML = entries.map((e, i) => `
+    <div class="entry-item">
+      <div>
+        <span>SP: </span><strong>${e.sp || '—'}</strong>
+        &nbsp;|&nbsp;
+        <span>الاسم: </span><strong>${e.name || '—'}</strong>
+      </div>
+      <button class="del-btn" onclick="deleteEntry(${i})">✕</button>
+    </div>
+  `).join('');
+}
 
-  function bulkAdd() {
-    const lines = bulk.trim().split("\n").filter(Boolean);
-    const newEntries = lines.map(l => {
-      const parts = l.split(",");
-      return { sp: (parts[0] || "").trim(), name: (parts[1] || "").trim() };
-    }).filter(e => e.sp || e.name);
-    setEntries(e => [...e, ...newEntries]);
-    setBulk("");
-    setStatus(`✓ تم إضافة ${newEntries.length} label`);
-    setTimeout(() => setStatus(""), 2000);
-  }
+function generatePDF() {
+  if (entries.length === 0) { alert('أضف labels أولاً'); return; }
 
-  function deleteEntry(i) {
-    setEntries(e => e.filter((_, idx) => idx !== i));
-  }
+  const { lw, lh, cols, rows, ml, mt } = getSettings();
+  const labelsPerPage = cols * rows;
+  const totalPages = Math.ceil(entries.length / labelsPerPage);
 
-  function saveSettings() {
-    setSavedMsg(true);
-    setTimeout(() => setSavedMsg(false), 1500);
-  }
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
-  function resetSettings() {
-    setSettings(DEFAULT_SETTINGS);
-  }
+  for (let p = 0; p < totalPages; p++) {
+    if (p > 0) doc.addPage();
 
-  async function generatePDF() {
-    if (entries.length === 0) { alert("أضف labels أولاً"); return; }
-    setStatus("⏳ جاري توليد PDF...");
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const idx = p * labelsPerPage + r * cols + c;
+        if (idx >= entries.length) continue;
 
-    // Dynamically load jsPDF
-    await new Promise((resolve, reject) => {
-      if (window.jspdf) return resolve();
-      const s = document.createElement("script");
-      s.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
-      s.onload = resolve; s.onerror = reject;
-      document.head.appendChild(s);
-    });
+        const entry = entries[idx];
+        const x = ml + c * lw;
+        const y = mt + r * lh;
 
-    const { jsPDF } = window.jspdf;
-    const { lw, lh, cols, rows, ml, mt } = settings;
-    const perPage = cols * rows;
-    const totalPages = Math.ceil(entries.length / perPage);
-    const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+        // Border
+        doc.setDrawColor(170);
+        doc.setLineWidth(0.2);
+        doc.rect(x, y, lw, lh);
 
-    for (let p = 0; p < totalPages; p++) {
-      if (p > 0) doc.addPage();
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const idx = p * perPage + r * cols + c;
-          if (idx >= entries.length) continue;
-          const { sp, name } = entries[idx];
-          const x = ml + c * lw;
-          const y = mt + r * lh;
-          doc.setDrawColor(150); doc.setLineWidth(0.2);
-          doc.rect(x, y, lw, lh);
-          doc.setFontSize(5.5); doc.setTextColor(80); doc.setFont(undefined, "normal");
-          doc.text("SP No: " + sp, x + 1.5, y + 6);
-          doc.setFontSize(6); doc.setTextColor(20); doc.setFont(undefined, "bold");
-          doc.text("Name: " + name, x + 1.5, y + 13);
-        }
+        // SP No
+        doc.setFontSize(6);
+        doc.setTextColor(80);
+        doc.text('SP No: ' + entry.sp, x + 1.5, y + 6);
+
+        // Name
+        doc.setFontSize(6.5);
+        doc.setTextColor(20);
+        doc.setFont(undefined, 'bold');
+        doc.text('Name: ' + entry.name, x + 1.5, y + 13);
+        doc.setFont(undefined, 'normal');
       }
     }
-
-    doc.save("labels.pdf");
-    setStatus(`✓ تم توليد PDF — ${entries.length} label على ${totalPages} صفحة`);
-    setTimeout(() => setStatus(""), 3000);
   }
 
-  const S = {
-    bg: "#0f0f13", surface: "#1a1a22", surface2: "#22222e",
-    border: "#2e2e3e", accent: "#00d4aa", accent2: "#7c6af7",
-    text: "#e8e8f0", muted: "#6b6b82", danger: "#ff4f6a"
-  };
-
-  const inp = {
-    width: "100%", background: S.surface2, border: `1px solid ${S.border}`,
-    borderRadius: 8, padding: "9px 12px", color: S.text,
-    fontFamily: "inherit", fontSize: "0.85rem", outline: "none"
-  };
-
-  const btn = (color, bg, border) => ({
-    width: "100%", padding: "12px", borderRadius: 9, border: border || "none",
-    fontFamily: "inherit", fontSize: "0.88rem", fontWeight: 600,
-    cursor: "pointer", color, background: bg, marginBottom: 8
-  });
-
-  return (
-    <div style={{ background: S.bg, minHeight: "100vh", padding: 16, color: S.text, fontFamily: "system-ui, sans-serif", direction: "rtl" }}>
-      <div style={{ fontSize: "1.3rem", fontWeight: 700, color: S.accent, marginBottom: 2 }}>🏷️ طباعة Labels</div>
-      <div style={{ fontSize: "0.8rem", color: S.muted, marginBottom: 16 }}>أدخل البيانات وحمّل PDF جاهز للطباعة</div>
-
-      {/* Tabs */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
-        {[["add","➕ إضافة"],["list","📝 القائمة"],["settings","⚙️ إعدادات"]].map(([t,l]) => (
-          <button key={t} onClick={() => setTab(t)} style={{
-            flex: 1, padding: "9px 4px", borderRadius: 8, border: "none",
-            background: tab === t ? S.accent : S.surface2,
-            color: tab === t ? "#000" : S.muted,
-            fontFamily: "inherit", fontSize: "0.78rem", fontWeight: 600, cursor: "pointer"
-          }}>{l}</button>
-        ))}
-      </div>
-
-      {/* ADD TAB */}
-      {tab === "add" && (
-        <div style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 14, padding: 16 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
-            <div>
-              <label style={{ display: "block", fontSize: "0.75rem", color: S.muted, marginBottom: 4 }}>SP No</label>
-              <input style={inp} value={sp} onChange={e => setSp(e.target.value)}
-                placeholder="1001" onKeyDown={e => { if (e.key === "Enter") nameRef.current?.focus(); }} />
-            </div>
-            <div>
-              <label style={{ display: "block", fontSize: "0.75rem", color: S.muted, marginBottom: 4 }}>الاسم</label>
-              <input style={inp} ref={nameRef} value={name} onChange={e => setName(e.target.value)}
-                placeholder="أحمد محمد" onKeyDown={e => { if (e.key === "Enter") addEntry(); }} />
-            </div>
-          </div>
-          <button style={btn("#000", S.accent)} onClick={addEntry}>+ إضافة</button>
-
-          <div style={{ fontSize: "0.7rem", color: S.muted, textTransform: "uppercase", letterSpacing: 1, margin: "14px 0 8px" }}>📋 استيراد دفعة (SP,الاسم)</div>
-          <div style={{ fontSize: "0.75rem", color: S.muted, background: S.surface2, borderRadius: 7, padding: "7px 10px", marginBottom: 8 }}>
-            مثال: <span style={{ color: S.accent }}>1001,أحمد محمد</span>
-          </div>
-          <textarea style={{ ...inp, minHeight: 80, resize: "vertical" }} value={bulk}
-            onChange={e => setBulk(e.target.value)}
-            placeholder={"1001,أحمد محمد\n1002,سارة علي\n1003,محمد خالد"} />
-          <button style={{ ...btn(S.text, S.surface2, `1px solid ${S.border}`), marginTop: 8 }} onClick={bulkAdd}>📥 استيراد الكل</button>
-          {status && <div style={{ color: S.accent, fontSize: "0.8rem", textAlign: "center", marginTop: 6 }}>{status}</div>}
-        </div>
-      )}
-
-      {/* LIST TAB */}
-      {tab === "list" && (
-        <div style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 14, padding: 16 }}>
-          <div style={{ display: "inline-block", background: S.accent2, color: "#fff", borderRadius: 20, padding: "2px 12px", fontSize: "0.75rem", marginBottom: 12 }}>
-            {entries.length} label
-          </div>
-          <div style={{ maxHeight: 280, overflowY: "auto", marginBottom: 12 }}>
-            {entries.length === 0
-              ? <div style={{ color: S.muted, fontSize: "0.8rem", textAlign: "center", padding: 20 }}>لا يوجد labels بعد</div>
-              : entries.map((e, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 10px", background: S.surface2, borderRadius: 7, marginBottom: 6, fontSize: "0.78rem" }}>
-                  <div>
-                    <span style={{ color: S.muted }}>SP: </span><strong>{e.sp || "—"}</strong>
-                    <span style={{ color: S.muted }}> | الاسم: </span><strong>{e.name || "—"}</strong>
-                  </div>
-                  <button onClick={() => deleteEntry(i)} style={{ background: "none", border: "none", color: S.muted, cursor: "pointer", fontSize: "1rem" }}>✕</button>
-                </div>
-              ))
-            }
-          </div>
-          <button style={btn("#000", S.accent)} onClick={generatePDF}>📄 توليد PDF وتحميله</button>
-          <button style={btn(S.danger, "transparent", `1px solid ${S.danger}`)} onClick={() => { if (confirm("مسح الكل؟")) setEntries([]); }}>🗑️ مسح الكل</button>
-          {status && <div style={{ color: S.accent, fontSize: "0.8rem", textAlign: "center", marginTop: 6 }}>{status}</div>}
-        </div>
-      )}
-
-      {/* SETTINGS TAB */}
-      {tab === "settings" && (
-        <div style={{ background: S.surface, border: `1px solid ${S.border}`, borderRadius: 14, padding: 16 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-            {[
-              ["lw","عرض Label (mm)"],["lh","ارتفاع Label (mm)"],
-              ["cols","عدد الأعمدة"],["rows","عدد الصفوف"],
-              ["ml","هامش أيسر (mm)"],["mt","هامش علوي (mm)"]
-            ].map(([k, label]) => (
-              <div key={k}>
-                <label style={{ display: "block", fontSize: "0.75rem", color: S.muted, marginBottom: 4 }}>{label}</label>
-                <input type="number" style={inp} value={settings[k]}
-                  onChange={e => setSettings(s => ({ ...s, [k]: +e.target.value }))} />
-              </div>
-            ))}
-          </div>
-
-          <div style={{ background: S.surface2, borderRadius: 8, padding: "10px 12px", fontSize: "0.78rem", color: S.muted, marginBottom: 12 }}>
-            Labels في الصفحة: <strong style={{ color: S.accent }}>{settings.cols * settings.rows}</strong>
-            &nbsp;|&nbsp; عدد الصفحات: <strong style={{ color: S.accent }}>{entries.length > 0 ? Math.ceil(entries.length / (settings.cols * settings.rows)) : 0}</strong>
-          </div>
-
-          <button style={btn("#000", S.accent)} onClick={saveSettings}>💾 حفظ الإعدادات</button>
-          <button style={btn(S.text, S.surface2, `1px solid ${S.border}`)} onClick={resetSettings}>↺ إعادة ضبط</button>
-          {savedMsg && <div style={{ color: S.accent, fontSize: "0.8rem", textAlign: "center", marginTop: 4 }}>✓ تم الحفظ</div>}
-        </div>
-      )}
-    </div>
-  );
+  doc.save('labels.pdf');
 }
 
+loadSettings();
+</script>
+</body>
+</html>
