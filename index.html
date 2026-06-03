@@ -3,428 +3,481 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MamonTV - بث مباشر عالمي</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>طباعة Labels</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#05080e;--bg2:#0b1120;--bg3:#111827;--card:#151d2e;--cardH:#1c2740;--acc:#00d4ff;--accG:rgba(0,212,255,.25);--acc2:#7c3aed;--live:#ef4444;--t1:#eef2ff;--t2:#94a3b8;--t3:#475569;--brd:rgba(148,163,184,.08);--grad:linear-gradient(135deg,#00d4ff,#7c3aed);--glass:rgba(11,17,32,.85)}
-body{font-family:'IBM Plex Sans Arabic','Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--t3);border-radius:9px}
-body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 20%,rgba(0,212,255,.03),transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(124,58,237,.03),transparent 50%);pointer-events:none;z-index:0}
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap');
 
-/* Splash */
-#splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s,visibility .6s}
-#splash.out{opacity:0;visibility:hidden;pointer-events:none}
-.sp-logo{font-family:'Noto Kufi Arabic';font-size:2.6rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sp-sub{color:var(--t3);font-size:.78rem;margin:.3rem 0 2rem}
-.sp-bar{width:240px;height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
-.sp-fill{height:100%;width:0%;background:var(--grad);border-radius:2px;transition:width .4s}
-.sp-txt{margin-top:1rem;color:var(--t2);font-size:.78rem;text-align:center;max-width:300px}
-.sp-num{color:var(--acc);font-family:'Noto Kufi Arabic';font-weight:700;font-size:1.1rem;margin-top:.5rem}
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --accent: #00d4aa;
+    --accent2: #7c6af7;
+    --text: #e8e8f0;
+    --text-muted: #6b6b82;
+    --danger: #ff4f6a;
+  }
 
-/* Nav */
-.nav{position:fixed;top:0;left:0;right:0;height:54px;background:var(--glass);backdrop-filter:blur(24px);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding:0 1.2rem;z-index:100;gap:.7rem}
-.nav .brand{font-family:'Noto Kufi Arabic';font-size:1.1rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;flex-shrink:0}
-.nav .ldot{width:7px;height:7px;border-radius:50%;background:var(--live);margin-right:.3rem;animation:bl 1.5s infinite;flex-shrink:0}
-@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-.tabs{display:flex;gap:0;flex-shrink:0}
-.tabs a{color:var(--t3);font-size:.72rem;font-weight:500;padding:.35rem .6rem;cursor:pointer;border-radius:6px;transition:all .25s;text-decoration:none;white-space:nowrap}
-.tabs a:hover{color:var(--t2)}
-.tabs a.on{color:var(--acc);background:rgba(0,212,255,.08)}
-.srch{margin-right:auto;position:relative}
-.srch input{background:rgba(255,255,255,.04);border:1px solid var(--brd);color:var(--t1);padding:.35rem .6rem .35rem 1.8rem;border-radius:20px;width:180px;font-family:inherit;font-size:.72rem;outline:none;transition:all .3s}
-.srch input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accG);width:260px}
-.srch input::placeholder{color:var(--t3)}
-.srch svg{position:absolute;left:.5rem;top:50%;transform:translateY(-50%);color:var(--t3);width:13px;height:13px}
-.bdg{background:var(--grad);color:#fff;padding:.12rem .5rem;border-radius:12px;font-size:.6rem;font-weight:700;flex-shrink:0}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* App */
-#wrap{display:none;position:relative;z-index:1}
-#wrap.on{display:block}
-.main{margin-top:54px;min-height:calc(100vh - 54px)}
+  body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px;
+  }
 
-/* Hero */
-.hero{position:relative;padding:2rem 1.5rem 1.5rem;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,.05),transparent 40%,rgba(124,58,237,.05))}
-.hero h1{font-family:'Noto Kufi Arabic';font-size:1.6rem;font-weight:900;line-height:1.3;position:relative;z-index:1}
-.hero h1 span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{color:var(--t2);font-size:.8rem;margin-top:.3rem;position:relative;z-index:1}
-.hstats{display:flex;gap:1.5rem;margin-top:.8rem;position:relative;z-index:1}
-.hs .n{font-family:'Noto Kufi Arabic';font-size:1.4rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hs .l{font-size:.62rem;color:var(--t3)}
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 28px; }
 
-/* Sections */
-.shdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem .5rem}
-.st{font-family:'Noto Kufi Arabic';font-size:.95rem;font-weight:700}
-.ss{color:var(--t3);font-size:.7rem}
-.sa{color:var(--acc);cursor:pointer;font-size:.75rem;text-decoration:none}
+  .layout { display: grid; grid-template-columns: 340px 1fr; gap: 20px; }
 
-/* Filter */
-.fbar{display:flex;gap:.3rem;padding:0 1.5rem .5rem;overflow-x:auto;scrollbar-width:none}
-.fbar::-webkit-scrollbar{display:none}
-.fb{background:rgba(255,255,255,.03);border:1px solid var(--brd);color:var(--t3);padding:.25rem .7rem;border-radius:20px;font-family:inherit;font-size:.68rem;cursor:pointer;white-space:nowrap;transition:all .25s}
-.fb:hover{color:var(--t2)}
-.fb.on{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.25);color:var(--acc)}
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
 
-/* Grid */
-.g{display:grid;padding:0 1.5rem 1.5rem;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
 
-/* Card */
-.c{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:.8rem;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;overflow:hidden}
-.c::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad);opacity:0;transition:opacity .25s}
-.c:hover{transform:translateY(-3px);border-color:rgba(0,212,255,.15);box-shadow:0 6px 24px rgba(0,0,0,.25)}
-.c:hover::before{opacity:1}
-.c-logo{width:50px;height:50px;border-radius:12px;background:var(--bg2);display:flex;align-items:center;justify-content:center;margin-bottom:.4rem;overflow:hidden;border:1px solid var(--brd)}
-.c-logo img{width:100%;height:100%;object-fit:contain;padding:3px}
-.c-logo .ph{font-family:'Noto Kufi Arabic';font-size:.9rem;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.c-n{font-size:.7rem;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:1.75em}
-.c-g{font-size:.58rem;color:var(--t3);margin-top:.15rem}
-.fv{position:absolute;top:.35rem;left:.35rem;background:rgba(0,0,0,.4);border:none;color:var(--t3);width:24px;height:24px;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;font-size:.7rem;transition:all .2s}
-.fv:hover,.fv.on{color:#f43f5e;background:rgba(244,63,94,.15)}
+  .field { margin-bottom: 14px; }
+  label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
 
-/* Modal */
-.mo{position:fixed;inset:0;background:rgba(5,8,14,.92);backdrop-filter:blur(12px);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
-.mo.on{display:flex}
-.mb{background:var(--bg2);border:1px solid var(--brd);border-radius:16px;width:100%;max-width:840px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);animation:mu .35s cubic-bezier(.16,1,.3,1)}
-@keyframes mu{from{transform:translateY(20px) scale(.97);opacity:0}}
-.mh{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;background:var(--bg3);border-bottom:1px solid var(--brd)}
-.mh .mt{font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:.4rem}
-.mh .lt{background:var(--live);color:#fff;padding:.08rem .35rem;border-radius:4px;font-size:.5rem;font-weight:700;display:flex;align-items:center;gap:.2rem}
-.mh .lt::before{content:'';width:4px;height:4px;border-radius:50%;background:#fff;animation:bl 1s infinite}
-.mx{background:none;border:none;color:var(--t3);cursor:pointer;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s}
-.mx:hover{background:rgba(239,68,68,.15);color:var(--live)}
-.mv{width:100%;aspect-ratio:16/9;background:#000;position:relative}
-.mv video{width:100%;height:100%;outline:none}
-.mv-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);color:var(--t2);font-size:.75rem;gap:.5rem;pointer-events:none;opacity:0;transition:opacity .3s}
-.mv-load.show{opacity:1}
-.mv-spin{width:18px;height:18px;border:2px solid var(--t3);border-top-color:var(--acc);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.mi{padding:.6rem 1rem;display:flex;align-items:center;gap:.6rem;border-top:1px solid var(--brd)}
-.ml{width:32px;height:32px;border-radius:8px;background:var(--card);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid var(--brd)}
-.ml img{width:100%;height:100%;object-fit:contain;padding:2px}
-.md .mn{font-weight:600;font-size:.8rem}
-.md .mg{color:var(--t3);font-size:.68rem}
+  input[type=text], input[type=number], textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
 
-/* Pages */
-.pg{display:none}.pg.on{display:block}
-.empty{display:flex;flex-direction:column;align-items:center;padding:3rem;color:var(--t3);text-align:center;grid-column:1/-1}
-.empty .ei{font-size:2rem;margin-bottom:.5rem}
-.lm{grid-column:1/-1;background:rgba(255,255,255,.03);border:1px solid var(--brd);color:var(--t2);padding:.6rem;border-radius:10px;font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .25s}
-.lm:hover{background:rgba(0,212,255,.06);color:var(--acc);border-color:rgba(0,212,255,.2)}
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-/* Mobile */
-@media(max-width:768px){
-  .nav{padding:0 .5rem;gap:.3rem;height:48px}.tabs{display:none}
-  .srch input{width:100px}.srch input:focus{width:150px}
-  .bn{position:fixed;bottom:0;left:0;right:0;background:var(--glass);backdrop-filter:blur(24px);border-top:1px solid var(--brd);display:flex;justify-content:space-around;padding:.25rem 0 env(safe-area-inset-bottom,.25rem);z-index:100}
-  .bn a{display:flex;flex-direction:column;align-items:center;gap:.05rem;color:var(--t3);text-decoration:none;font-size:.52rem;padding:.15rem .4rem;transition:color .2s}
-  .bn a.on{color:var(--acc)}.bn a svg{width:17px;height:17px}
-  .main{margin-top:48px;margin-bottom:55px}
-  .hero{padding:1.2rem .8rem 1rem}.hero h1{font-size:1.2rem}
-  .shdr,.fbar,.g{padding-left:.6rem;padding-right:.6rem}
-  .g{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:.4rem}
-  .c{padding:.6rem;border-radius:9px}.c-logo{width:40px;height:40px;border-radius:9px}.c-n{font-size:.65rem}
-}
-@media(min-width:769px){.bn{display:none}}
+  .btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 9px;
+    border: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #00ffe0; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+
+  .entries-list {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 14px;
+  }
+  .entry-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border-radius: 7px;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+  }
+  .entry-item span { color: var(--text-muted); }
+  .entry-item strong { color: var(--text); }
+  .del-btn {
+    background: none; border: none; color: var(--text-muted);
+    cursor: pointer; font-size: 1rem; padding: 0 4px;
+    transition: color 0.15s;
+  }
+  .del-btn:hover { color: var(--danger); }
+
+  .count-badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    margin-bottom: 12px;
+  }
+
+  /* Preview */
+  .preview-wrap {
+    background: #fff;
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #preview-page {
+    background: white;
+    position: relative;
+    transform-origin: top center;
+  }
+
+  .label-cell {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2px 3px;
+    border: 0.5px solid #bbb;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .label-cell .sp { font-size: 7px; color: #333; white-space: nowrap; overflow: hidden; }
+  .label-cell .nm { font-size: 7px; color: #111; font-weight: bold; white-space: nowrap; overflow: hidden; }
+  .label-cell.empty { border-color: #ddd; }
+
+  .settings-saved {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-align: center;
+    height: 18px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  /* Bulk import */
+  textarea { resize: vertical; min-height: 80px; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .layout { display: block; }
+    .panel { display: none; }
+    .preview-wrap {
+      background: white;
+      border-radius: 0;
+      padding: 0;
+    }
+    #preview-page { transform: none !important; }
+    .label-cell { border-color: #999; }
+  }
 </style>
 </head>
 <body>
 
-<div id="splash">
-  <div class="sp-logo">MamonTV</div>
-  <div class="sp-sub">بث مباشر • قنوات عالمية</div>
-  <div class="sp-bar"><div class="sp-fill" id="sf"></div></div>
-  <div class="sp-txt" id="stxt">جاري تحميل قاعدة البيانات...</div>
-  <div class="sp-num" id="snum"></div>
-</div>
+<h1>🏷️ طباعة Labels</h1>
+<p class="subtitle">أدخل الأرقام والأسماء واطبع مباشرة على الملصقات</p>
 
-<div id="wrap">
-  <nav class="nav">
-    <div class="ldot"></div>
-    <div class="brand" onclick="go('home')">MamonTV</div>
-    <div class="tabs">
-      <a onclick="go('home')" class="on" data-p="home">الرئيسية</a>
-      <a onclick="go('all')" data-p="all">جميع القنوات</a>
-      <a onclick="go('fav')" data-p="fav">❤️ المفضلة</a>
-    </div>
-    <div class="srch">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" id="si" placeholder="ابحث..." oninput="doSearch(this.value)">
-    </div>
-    <div class="bdg" id="cnt">0</div>
-  </nav>
-  <div class="bn">
-    <a onclick="go('home')" class="on" data-p="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>الرئيسية</a>
-    <a onclick="go('all')" data-p="all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2"/><polyline points="17 2 12 7 7 2"/></svg>القنوات</a>
-    <a onclick="go('fav')" data-p="fav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>المفضلة</a>
-  </div>
-  <main class="main">
-    <div class="pg on" id="v-home">
-      <div class="hero">
-        <h1><span>MamonTV</span> بث مباشر عالمي</h1>
-        <p>آلاف القنوات من جميع أنحاء العالم - مجانية ومفتوحة</p>
-        <div class="hstats"><div class="hs"><div class="n" id="xT">0</div><div class="l">قناة</div></div><div class="hs"><div class="n" id="xG">0</div><div class="l">تصنيف</div></div></div>
+<div class="layout">
+  <!-- Left Panel -->
+  <div>
+    <!-- Page Settings -->
+    <div class="panel" style="margin-bottom:16px">
+      <div class="section-title">⚙️ إعدادات الصفحة</div>
+      <div class="row2">
+        <div class="field">
+          <label>عرض Label (mm)</label>
+          <input type="number" id="lw" value="24" min="5" max="200" onchange="saveSettings();renderPreview()">
+        </div>
+        <div class="field">
+          <label>ارتفاع Label (mm)</label>
+          <input type="number" id="lh" value="19" min="5" max="200" onchange="saveSettings();renderPreview()">
+        </div>
+        <div class="field">
+          <label>عدد الأعمدة</label>
+          <input type="number" id="cols" value="3" min="1" max="20" onchange="saveSettings();renderPreview()">
+        </div>
+        <div class="field">
+          <label>عدد الصفوف</label>
+          <input type="number" id="rows" value="8" min="1" max="30" onchange="saveSettings();renderPreview()">
+        </div>
+        <div class="field">
+          <label>هامش أيسر (mm)</label>
+          <input type="number" id="ml" value="0" min="0" max="50" onchange="saveSettings();renderPreview()">
+        </div>
+        <div class="field">
+          <label>هامش علوي (mm)</label>
+          <input type="number" id="mt" value="0" min="0" max="50" onchange="saveSettings();renderPreview()">
+        </div>
       </div>
-      <div id="hc"></div>
+      <button class="btn btn-secondary" onclick="saveSettings()">💾 حفظ الإعدادات</button>
+      <button class="btn btn-secondary" onclick="resetSettings()">↺ إعادة ضبط</button>
+      <div class="settings-saved" id="saved-msg">✓ تم الحفظ</div>
     </div>
-    <div class="pg" id="v-all">
-      <div class="shdr"><div><div class="st">📡 جميع القنوات</div><div class="ss" id="as"></div></div></div>
-      <div class="fbar" id="af"></div>
-      <div class="g" id="ag"></div>
-    </div>
-    <div class="pg" id="v-fav">
-      <div class="shdr"><div><div class="st">❤️ المفضلة</div><div class="ss" id="fs"></div></div></div>
-      <div class="g" id="fg"></div>
-    </div>
-  </main>
-</div>
 
-<div class="mo" id="modal">
-  <div class="mb">
-    <div class="mh"><div class="mt"><span class="lt">LIVE</span><span id="mt"></span></div><button class="mx" onclick="cp()">✕</button></div>
-    <div class="mv"><video id="vid" controls autoplay playsinline></video><div class="mv-load" id="mvload"><div class="mv-spin"></div>جاري التحميل...</div></div>
-    <div id="perr"></div>
-    <div class="mi"><div class="ml" id="mll"></div><div class="md"><div class="mn" id="mnn"></div><div class="mg" id="mgg"></div></div></div>
+    <!-- Add Entry -->
+    <div class="panel" style="margin-bottom:16px">
+      <div class="section-title">➕ إضافة Label</div>
+      <div class="row2">
+        <div class="field">
+          <label>SP No</label>
+          <input type="text" id="sp-input" placeholder="مثال: 1001" onkeydown="if(event.key==='Enter')addEntry()">
+        </div>
+        <div class="field">
+          <label>الاسم</label>
+          <input type="text" id="name-input" placeholder="الاسم" onkeydown="if(event.key==='Enter')addEntry()">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addEntry()">+ إضافة</button>
+
+      <div class="section-title" style="margin-top:16px">📋 استيراد دفعة (SP,Name في كل سطر)</div>
+      <textarea id="bulk-input" placeholder="1001,أحمد محمد&#10;1002,سارة علي&#10;1003,محمد خالد"></textarea>
+      <button class="btn btn-secondary" onclick="bulkAdd()" style="margin-top:8px">استيراد الكل</button>
+    </div>
+
+    <!-- Entries List -->
+    <div class="panel">
+      <div class="section-title">📝 القائمة</div>
+      <div class="count-badge" id="count-badge">0 label</div>
+      <div class="entries-list" id="entries-list"></div>
+      <button class="btn btn-primary" onclick="printLabels()">🖨️ طباعة</button>
+      <button class="btn btn-danger" onclick="clearAll()">🗑️ مسح الكل</button>
+    </div>
+  </div>
+
+  <!-- Right: Preview -->
+  <div class="panel">
+    <div class="section-title">👁️ معاينة</div>
+    <div class="preview-wrap">
+      <div id="preview-page"></div>
+    </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.7/dist/hls.min.js"></script>
 <script>
-const M3U_URL='https://iptv-org.github.io/iptv/index.m3u';
-let CH=[],fv=JSON.parse(localStorage.getItem('mtv4')||'[]'),hl=null,curF='all',allGroups=[];
+let entries = [];
 
-// Parse M3U
-function parse(t){
-  const ls=t.split('\n'),r=[];let c=null;
-  for(let i=0;i<ls.length;i++){
-    const l=ls[i].trim();
-    if(l.startsWith('#EXTINF:')){
-      c={};
-      const tn=l.match(/tvg-name="([^"]*)"/),tl=l.match(/tvg-logo="([^"]*)"/),gt=l.match(/group-title="([^"]*)"/);
-      const ci=l.lastIndexOf(','),dn=ci!==-1?l.substring(ci+1).trim():'';
-      c.name=tn?tn[1]:dn;c.dn=dn||(tn?tn[1]:'Unknown');c.logo=tl?tl[1]:'';c.group=gt?gt[1]:'';
-      if(!c.group)c.group='Other';
-    }else if(l&&!l.startsWith('#')&&c){c.url=l;c.id='c'+r.length;r.push(c);c=null;}
-  }return r;
-}
-
-function grps(items){const g={};items.forEach(i=>{g[i.group]=(g[i.group]||0)+1;});return Object.entries(g).sort((a,b)=>b[1]-a[1]);}
-
-function card(i,x){
-  const d=Math.min(x*5,120);
-  return `<div class="c" style="animation:fadeUp .3s ${d}ms both" onclick="pl('${i.id}')">
-    <button class="fv ${fv.includes(i.id)?'on':''}" onclick="event.stopPropagation();tf('${i.id}',this)">${fv.includes(i.id)?'❤️':'🤍'}</button>
-    <div class="c-logo">${i.logo?`<img src="${i.logo}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=ph>${(i.dn[0]||'?')}</div>'">`:`<div class="ph">${i.dn[0]||'?'}</div>`}</div>
-    <div class="c-n">${i.dn}</div>
-    <div class="c-g">${i.group}</div>
-  </div>`;
-}
-function rGrid(items,el,lim){
-  const e=document.getElementById(el);
-  if(!items.length){e.innerHTML='<div class="empty"><div class="ei">📡</div><div>لا توجد نتائج</div></div>';return;}
-  const mx=lim||150,sh=items.slice(0,mx);
-  e.innerHTML=sh.map((i,x)=>card(i,x)).join('');
-  if(items.length>mx)e.innerHTML+=`<button class="lm" onclick="more('${el}',${mx})">عرض المزيد (${(items.length-mx).toLocaleString()} قناة)</button>`;
-}
-function more(el,cur){
-  const items=curF==='all'?CH:CH.filter(i=>i.group===curF);
-  rGrid(items,el,cur+300);
-}
-function rCats(){
-  const el=document.getElementById('af');
-  el.innerHTML=`<button class="fb on" onclick="filt('all',this)">الكل <span style="opacity:.5;font-size:.6rem">${CH.length.toLocaleString()}</span></button>`+
-    allGroups.slice(0,50).map(([n,c])=>`<button class="fb" onclick="filt('${n.replace(/'/g,"\\'")}',this)">${n} <span style="opacity:.5;font-size:.6rem">${c}</span></button>`).join('');
-}
-function filt(cat,btn){
-  curF=cat;btn.parentElement.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
-  rGrid(cat==='all'?CH:CH.filter(i=>i.group===cat),'ag');
-}
-function rHome(){
-  const gs=allGroups.slice(0,8);
-  let h='';
-  gs.forEach(([name,count])=>{
-    const items=CH.filter(i=>i.group===name).slice(0,6);
-    h+=`<div class="shdr"><div><div class="st">${name}</div><div class="ss">${count.toLocaleString()} قناة</div></div><a class="sa" onclick="go('all')">الكل ←</a></div>
-    <div class="g">${items.map((i,x)=>card(i,x)).join('')}</div>`;
-  });
-  document.getElementById('hc').innerHTML=h;
+// Load settings from localStorage
+function loadSettings() {
+  const s = localStorage.getItem('label_settings');
+  if (s) {
+    const d = JSON.parse(s);
+    document.getElementById('lw').value = d.lw ?? 24;
+    document.getElementById('lh').value = d.lh ?? 19;
+    document.getElementById('cols').value = d.cols ?? 3;
+    document.getElementById('rows').value = d.rows ?? 8;
+    document.getElementById('ml').value = d.ml ?? 0;
+    document.getElementById('mt').value = d.mt ?? 0;
+  }
+  const e = localStorage.getItem('label_entries');
+  if (e) {
+    entries = JSON.parse(e);
+    renderList();
+  }
 }
 
-// Nav
-function go(p){
-  document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));
-  document.getElementById('v-'+p).classList.add('on');
-  document.querySelectorAll('[data-p]').forEach(a=>a.classList.toggle('on',a.dataset.p===p));
-  if(p==='fav')rFav();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function doSearch(q){
-  q=q.toLowerCase().trim();
-  if(!q){rGrid(CH,'ag');return;}
-  const p=document.querySelector('.pg.on').id.replace('v-','');
-  if(p==='home')go('all');
-  rGrid(CH.filter(i=>i.dn.toLowerCase().includes(q)||i.group.toLowerCase().includes(q)),'ag');
-}
-function tf(id,btn){
-  const idx=fv.indexOf(id);
-  if(idx===-1){fv.push(id);btn.classList.add('on');btn.innerHTML='❤️';}
-  else{fv.splice(idx,1);btn.classList.remove('on');btn.innerHTML='🤍';}
-  localStorage.setItem('mtv4',JSON.stringify(fv));
-}
-function rFav(){
-  const fa=CH.filter(i=>fv.includes(i.id));
-  document.getElementById('fs').textContent=fa.length+' قناة';
-  if(!fa.length){document.getElementById('fg').innerHTML='<div class="empty"><div class="ei">❤️</div><div>لم تضف قنوات للمفضلة</div></div>';return;}
-  rGrid(fa,'fg');
-}
-
-// Player
-const PROXY='https://corsproxy.io/?url=';
-let curId=null,tryCount=0;
-
-function showErr(msg,canRetry){
-  const err=document.getElementById('perr');
-  err.innerHTML=msg+(canRetry?` <button onclick="retryProxy()" style="margin-right:.5rem;background:rgba(0,212,255,.15);border:1px solid rgba(0,212,255,.3);color:var(--acc);padding:.15rem .5rem;border-radius:6px;cursor:pointer;font-family:inherit;font-size:.7rem">إعادة المحاولة عبر بروكسي</button>`:'');
-  err.style.cssText='display:block;padding:.5rem 1rem;background:rgba(239,68,68,.1);color:#f87171;font-size:.72rem;text-align:center';
-}
-
-function loadStream(url,useProxy){
-  const v=document.getElementById('vid');
-  const src=useProxy?PROXY+encodeURIComponent(url):url;
-  const err=document.getElementById('perr');
-  err.style.display='none';err.innerHTML='';
-  if(hl){hl.destroy();hl=null;}
-  v.removeAttribute('src');v.load();
-  v.onerror=null;
-
-  const loader=document.getElementById('mvload');
-  loader.classList.add('show');
-  v.oncanplay=()=>loader.classList.remove('show');
-  v.onplaying=()=>loader.classList.remove('show');
-
-  const isDirect=url.match(/\.(mp4|mp3|webm|ogg)(\?|$)/i);
-  const doFallback=()=>{
-    loader.classList.remove('show');
-    if(!useProxy&&tryCount<1){
-      tryCount++;
-      loadStream(url,true);
-    } else {
-      showErr('⚠️ تعذر تشغيل القناة - الرابط قد يكون معطل أو محجوب بسبب CORS',false);
-    }
+function saveSettings() {
+  const s = {
+    lw: +document.getElementById('lw').value,
+    lh: +document.getElementById('lh').value,
+    cols: +document.getElementById('cols').value,
+    rows: +document.getElementById('rows').value,
+    ml: +document.getElementById('ml').value,
+    mt: +document.getElementById('mt').value,
   };
+  localStorage.setItem('label_settings', JSON.stringify(s));
+  const msg = document.getElementById('saved-msg');
+  msg.style.opacity = 1;
+  setTimeout(() => msg.style.opacity = 0, 1500);
+}
 
-  if(isDirect){
-    v.src=src;
-    v.onerror=doFallback;
-    v.play().catch(doFallback);
-  } else if(typeof Hls!=='undefined'&&Hls.isSupported()){
-    hl=new Hls({
-      enableWorker:true,
-      xhrSetup:x=>{x.timeout=15000;},
-      manifestLoadingTimeOut:15000,
-      manifestLoadingMaxRetry:1
-    });
-    hl.loadSource(src);
-    hl.attachMedia(v);
-    hl.on(Hls.Events.MANIFEST_PARSED,()=>{loader.classList.remove('show');v.play().catch(()=>{});});
-    hl.on(Hls.Events.ERROR,(e,d)=>{
-      if(d.fatal){
-        hl.destroy();hl=null;
-        doFallback();
-      }
-    });
-  } else if(v.canPlayType('application/vnd.apple.mpegurl')){
-    v.src=src;
-    v.onerror=doFallback;
-    v.play().catch(()=>{});
-  } else {
-    v.src=src;
-    v.onerror=doFallback;
-    v.play().catch(doFallback);
+function resetSettings() {
+  localStorage.removeItem('label_settings');
+  document.getElementById('lw').value = 24;
+  document.getElementById('lh').value = 19;
+  document.getElementById('cols').value = 3;
+  document.getElementById('rows').value = 8;
+  document.getElementById('ml').value = 0;
+  document.getElementById('mt').value = 0;
+  renderPreview();
+}
+
+function getSettings() {
+  return {
+    lw: +document.getElementById('lw').value,
+    lh: +document.getElementById('lh').value,
+    cols: +document.getElementById('cols').value,
+    rows: +document.getElementById('rows').value,
+    ml: +document.getElementById('ml').value,
+    mt: +document.getElementById('mt').value,
+  };
+}
+
+function addEntry() {
+  const sp = document.getElementById('sp-input').value.trim();
+  const name = document.getElementById('name-input').value.trim();
+  if (!sp && !name) return;
+  entries.push({ sp, name });
+  document.getElementById('sp-input').value = '';
+  document.getElementById('name-input').value = '';
+  document.getElementById('sp-input').focus();
+  saveEntries();
+  renderList();
+  renderPreview();
+}
+
+function bulkAdd() {
+  const raw = document.getElementById('bulk-input').value.trim();
+  if (!raw) return;
+  const lines = raw.split('\n');
+  lines.forEach(line => {
+    const parts = line.split(',');
+    const sp = (parts[0] || '').trim();
+    const name = (parts[1] || '').trim();
+    if (sp || name) entries.push({ sp, name });
+  });
+  document.getElementById('bulk-input').value = '';
+  saveEntries();
+  renderList();
+  renderPreview();
+}
+
+function deleteEntry(i) {
+  entries.splice(i, 1);
+  saveEntries();
+  renderList();
+  renderPreview();
+}
+
+function clearAll() {
+  if (!confirm('مسح جميع الـ labels؟')) return;
+  entries = [];
+  saveEntries();
+  renderList();
+  renderPreview();
+}
+
+function saveEntries() {
+  localStorage.setItem('label_entries', JSON.stringify(entries));
+}
+
+function renderList() {
+  const list = document.getElementById('entries-list');
+  const badge = document.getElementById('count-badge');
+  badge.textContent = entries.length + ' label';
+  if (entries.length === 0) {
+    list.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:16px">لا يوجد labels بعد</div>';
+    return;
   }
+  list.innerHTML = entries.map((e, i) => `
+    <div class="entry-item">
+      <div>
+        <span>SP: </span><strong>${e.sp || '—'}</strong>
+        &nbsp;|&nbsp;
+        <span>الاسم: </span><strong>${e.name || '—'}</strong>
+      </div>
+      <button class="del-btn" onclick="deleteEntry(${i})">✕</button>
+    </div>
+  `).join('');
 }
 
-function retryProxy(){
-  const item=CH.find(i=>i.id===curId);
-  if(item){tryCount=1;loadStream(item.url.trim(),true);}
-}
+function renderPreview() {
+  const { lw, lh, cols, rows, ml, mt } = getSettings();
+  const PX_PER_MM = 3.78; // 96dpi / 25.4
 
-function pl(id){
-  const item=CH.find(i=>i.id===id);if(!item)return;
-  curId=id;tryCount=0;
-  document.getElementById('mt').textContent=item.dn;
-  document.getElementById('mnn').textContent=item.dn;
-  document.getElementById('mgg').textContent=item.group;
-  document.getElementById('mll').innerHTML=item.logo?`<img src="${item.logo}" onerror="this.parentElement.textContent='📺'">`:'📺';
-  loadStream(item.url.trim(),false);
-  document.getElementById('modal').classList.add('on');document.body.style.overflow='hidden';
-}
-function cp(){
-  const v=document.getElementById('vid');v.pause();v.removeAttribute('src');v.load();v.onerror=null;
-  if(hl){hl.destroy();hl=null;}
-  curId=null;tryCount=0;
-  document.getElementById('mvload').classList.remove('show');
-  document.getElementById('perr').style.display='none';
-  document.getElementById('modal').classList.remove('on');document.body.style.overflow='';
-}
-document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)cp();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')cp();});
+  const pageW = 210 * PX_PER_MM;
+  const pageH = 297 * PX_PER_MM;
+  const labelW = lw * PX_PER_MM;
+  const labelH = lh * PX_PER_MM;
+  const marginL = ml * PX_PER_MM;
+  const marginT = mt * PX_PER_MM;
 
-// CSS animation
-const style=document.createElement('style');
-style.textContent='@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}';
-document.head.appendChild(style);
+  const page = document.getElementById('preview-page');
+  page.style.width = pageW + 'px';
+  page.style.height = pageH + 'px';
 
-// LOAD
-(async function(){
-  const sf=document.getElementById('sf'),stxt=document.getElementById('stxt'),snum=document.getElementById('snum');
-  sf.style.width='5%';
-  try{
-    stxt.textContent='جاري الاتصال بقاعدة البيانات...';
-    const resp=await fetch(M3U_URL);
-    if(!resp.ok)throw new Error('HTTP '+resp.status);
-    
-    sf.style.width='15%';stxt.textContent='جاري التحميل...';
-    const reader=resp.body.getReader();
-    const total=parseInt(resp.headers.get('content-length'))||0;
-    let received=0,chunks=[];
-    
-    while(true){
-      const{done,value}=await reader.read();
-      if(done)break;
-      chunks.push(value);received+=value.length;
-      const pct=total?Math.round((received/total)*60)+15:30;
-      sf.style.width=pct+'%';
-      const mb=(received/1024/1024).toFixed(1);
-      stxt.textContent=`جاري التحميل... ${mb} MB`;
+  // Scale to fit preview area
+  const wrap = page.parentElement;
+  const availW = wrap.clientWidth - 20;
+  const availH = window.innerHeight * 0.75;
+  const scale = Math.min(availW / pageW, availH / pageH, 1);
+  page.style.transform = `scale(${scale})`;
+  page.style.marginTop = `-${pageH * (1 - scale) / 2}px`;
+  wrap.style.height = (pageH * scale + 20) + 'px';
+
+  let html = '';
+  let idx = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const x = marginL + c * labelW;
+      const y = marginT + r * labelH;
+      const entry = entries[idx] || null;
+      html += `<div class="label-cell ${entry ? '' : 'empty'}" style="left:${x}px;top:${y}px;width:${labelW}px;height:${labelH}px">
+        <div class="sp">SP: ${entry ? entry.sp : ''}</div>
+        <div class="nm">${entry ? entry.name : ''}</div>
+      </div>`;
+      idx++;
     }
-    
-    sf.style.width='75%';stxt.textContent='جاري تحليل القنوات...';
-    const blob=new Blob(chunks);
-    const text=await blob.text();
-    
-    sf.style.width='85%';
-    CH=parse(text);
-    snum.textContent=CH.length.toLocaleString()+' قناة';
-    stxt.textContent='جاري بناء الواجهة...';
-    allGroups=grps(CH);
-    
-    sf.style.width='95%';
-    document.getElementById('cnt').textContent=CH.length.toLocaleString();
-    document.getElementById('xT').textContent=CH.length.toLocaleString();
-    document.getElementById('xG').textContent=allGroups.length;
-    document.getElementById('as').textContent=CH.length.toLocaleString()+' قناة';
-    
-    rHome();rCats();rGrid(CH,'ag');
-    
-    sf.style.width='100%';stxt.textContent='جاهز!';
-    setTimeout(()=>{document.getElementById('splash').classList.add('out');document.getElementById('wrap').classList.add('on');},400);
-  }catch(e){
-    sf.style.width='100%';sf.style.background='#ef4444';
-    stxt.textContent='خطأ: '+e.message;
-    snum.textContent='حاول فتح الملف في متصفح خارجي';
   }
-})();
+  page.innerHTML = html;
+}
+
+function printLabels() {
+  if (entries.length === 0) { alert('أضف labels أولاً'); return; }
+  const { lw, lh, cols, rows, ml, mt } = getSettings();
+
+  // Build print-ready HTML
+  const labelsPerPage = cols * rows;
+  const totalPages = Math.ceil(entries.length / labelsPerPage);
+
+  let pagesHTML = '';
+  for (let p = 0; p < totalPages; p++) {
+    let labelsHTML = '';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const idx = p * labelsPerPage + r * cols + c;
+        const entry = entries[idx] || { sp: '', name: '' };
+        const x = ml + c * lw;
+        const y = mt + r * lh;
+        labelsHTML += `<div style="position:absolute;left:${x}mm;top:${y}mm;width:${lw}mm;height:${lh}mm;box-sizing:border-box;border:0.3px solid #aaa;padding:1mm 1.5mm;overflow:hidden;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-size:6pt;color:#333;white-space:nowrap">SP No: ${entry.sp}</div>
+          <div style="font-size:6pt;font-weight:bold;color:#111;white-space:nowrap">Name: ${entry.name}</div>
+        </div>`;
+      }
+    }
+    pagesHTML += `<div style="position:relative;width:210mm;height:297mm;background:white;page-break-after:always;">${labelsHTML}</div>`;
+  }
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <style>
+      body { margin:0; padding:0; }
+      @page { size: A4; margin: 0; }
+      @media print { body { margin:0; } }
+    </style>
+  </head><body>${pagesHTML}<script>window.onload=()=>{window.print();window.close();}<\/script></body></html>`);
+  win.document.close();
+}
+
+// Init
+loadSettings();
+renderPreview();
+window.addEventListener('resize', renderPreview);
 </script>
 </body>
 </html>
+
